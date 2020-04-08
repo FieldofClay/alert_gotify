@@ -46,11 +46,6 @@ if len(sys.argv) > 1 and sys.argv[1] == "--execute":
             url = url[:-1]
         url += "/message"
 
-        eprint(url)
-        eprint(payload)
-        eprint(headers)
-        eprint(ssl_verify)
-
         #doit
         r = requests.post(url,headers=headers,json=payload,verify=ssl_verify)
         if r.status_code == 200:
