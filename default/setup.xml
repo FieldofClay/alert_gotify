@@ -1,0 +1,17 @@
+<setup>
+    <block title="Gotify Alert Action">
+        <text>Configure</text>
+    </block>
+
+    <block title="Gotify Server" endpoint="admin/alert_actions" entity="gotify_message">
+        <input field="param.url">
+            <label>URL</label>
+            <type>text</type>
+        </input>
+        <input field="param.token">
+            <label>App Token</label>
+            <type>text</type>
+        </input>
+    </block>
+
+</setup>
