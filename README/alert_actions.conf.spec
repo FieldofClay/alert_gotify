@@ -1,4 +1,4 @@
-[gotify_server]
+[gotify_message]
 param.url = <string>
 * URL of your Gotify server. Include http/https and port. IE https://push.example.com:8443
 
