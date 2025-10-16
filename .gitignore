@@ -1,6 +1,33 @@
+# Virtual environments
 .venv
-output
+venv/
+env/
+
+# Build output
+output/
 *.tar.gz
-.pytest_cache
-__pycache__
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Testing
+.pytest_cache/
 .coverage
+coverage.xml
+htmlcov/
+.tox/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
