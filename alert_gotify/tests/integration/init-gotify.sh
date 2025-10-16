@@ -3,6 +3,12 @@ set -e
 
 echo "Initializing Gotify and creating test application..."
 
+# Install curl if not available
+if ! command -v curl > /dev/null 2>&1; then
+    echo "Installing curl..."
+    apk add --no-cache curl
+fi
+
 # Wait for Gotify to be fully ready
 sleep 5
 

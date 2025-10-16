@@ -15,7 +15,7 @@ services:
       start_period: 30s
 
   gotify-init:
-    image: curlimages/curl:latest
+    image: alpine:latest
     container_name: gotify-init
     networks:
       - splunk-net
@@ -31,6 +31,23 @@ services:
       GOTIFY_USER: admin
       GOTIFY_PASS: admin
 
+  splunk-init:
+    image: alpine:latest
+    container_name: splunk-init
+    networks:
+      - splunk-net
+    depends_on:
+      gotify-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./configure-splunk.sh:/configure-splunk.sh:ro
+      - ./splunk_config:/splunk_config:ro
+      - gotify-data:/gotify-data:ro
+      - splunk-config:/splunk-config
+    command: sh /configure-splunk.sh
+    environment:
+      OUTPUT_DIR: /splunk-config
+
   splunk:
     image: splunk/splunk:${SPLUNK_VERSION:-10.0}
     container_name: splunk
@@ -40,9 +57,7 @@ services:
       SPLUNK_PASSWORD: who_rocks?
     volumes:
       - ../../../output/alert_gotify:/opt/splunk/etc/apps/alert_gotify
-      - ./splunk_config:/tmp/splunk_config:ro
-      - gotify-data:/gotify-data:ro
-      - ./configure-splunk.sh:/configure-splunk.sh:ro
+      - splunk-config:/opt/splunk/etc/apps/test_alert/local
     ports:
       - 8000:8000
     networks:
@@ -54,15 +69,8 @@ services:
       retries: 30
       start_period: 120s
     depends_on:
-      gotify-init:
+      splunk-init:
         condition: service_completed_successfully
-    entrypoint: >
-      /bin/bash -c "
-      /sbin/entrypoint.sh start-service &
-      sleep 120 &&
-      /configure-splunk.sh &&
-      wait
-      "
 
 networks:
   splunk-net:
@@ -70,3 +78,4 @@ networks:
 
 volumes:
   gotify-data:
+  splunk-config:
