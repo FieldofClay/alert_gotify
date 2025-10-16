@@ -5,7 +5,11 @@ Unit tests for alert_gotify main module.
 import os
 import sys
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, MagicMock
+
+# Mock the splunktaucclib module before importing
+sys.modules['splunktaucclib'] = MagicMock()
+sys.modules['splunktaucclib.alert_actions_base'] = MagicMock()
 
 # Import the module to test
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "package", "bin"))

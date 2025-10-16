@@ -30,14 +30,6 @@ jobs:
         cd alert_gotify/tests
         pytest --cov=../package/bin/alert_gotify --cov-report=term --cov-report=xml
     
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./alert_gotify/tests/coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
-
   build:
     runs-on: ubuntu-latest
     needs: test
