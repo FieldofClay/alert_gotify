@@ -1,0 +1,72 @@
+services:
+  gotify:
+    image: gotify/server:latest
+    container_name: gotify
+    environment:
+      GOTIFY_DEFAULTUSER_NAME: admin
+      GOTIFY_DEFAULTUSER_PASS: admin
+    networks:
+      - splunk-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  gotify-init:
+    image: curlimages/curl:latest
+    container_name: gotify-init
+    networks:
+      - splunk-net
+    depends_on:
+      gotify:
+        condition: service_healthy
+    volumes:
+      - ./init-gotify.sh:/init-gotify.sh:ro
+      - gotify-data:/data
+    command: sh /init-gotify.sh
+    environment:
+      GOTIFY_URL: http://gotify
+      GOTIFY_USER: admin
+      GOTIFY_PASS: admin
+
+  splunk:
+    image: splunk/splunk:${SPLUNK_VERSION:-10.0}
+    container_name: splunk
+    environment:
+      SPLUNK_START_ARGS: --accept-license
+      SPLUNK_GENERAL_TERMS: --accept-sgt-current-at-splunk-com
+      SPLUNK_PASSWORD: who_rocks?
+    volumes:
+      - ../../../output/alert_gotify:/opt/splunk/etc/apps/alert_gotify
+      - ./splunk_config:/tmp/splunk_config:ro
+      - gotify-data:/gotify-data:ro
+      - ./configure-splunk.sh:/configure-splunk.sh:ro
+    ports:
+      - 8000:8000
+    networks:
+      - splunk-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+    depends_on:
+      gotify-init:
+        condition: service_completed_successfully
+    entrypoint: >
+      /bin/bash -c "
+      /sbin/entrypoint.sh start-service &
+      sleep 120 &&
+      /configure-splunk.sh &&
+      wait
+      "
+
+networks:
+  splunk-net:
+    driver: bridge
+
+volumes:
+  gotify-data:
