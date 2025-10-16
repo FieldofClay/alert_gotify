@@ -7,9 +7,18 @@ import sys
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 
+# Create a proper mock base class that can be subclassed
+class MockModularAlertBase:
+    """Mock implementation of ModularAlertBase for testing."""
+    def __init__(self, ta_name, alert_name):
+        self.ta_name = ta_name
+        self.alert_name = alert_name
+
 # Mock the splunktaucclib module before importing
 sys.modules['splunktaucclib'] = MagicMock()
-sys.modules['splunktaucclib.alert_actions_base'] = MagicMock()
+mock_alert_actions_base = MagicMock()
+mock_alert_actions_base.ModularAlertBase = MockModularAlertBase
+sys.modules['splunktaucclib.alert_actions_base'] = mock_alert_actions_base
 
 # Import the module to test
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "package", "bin"))
