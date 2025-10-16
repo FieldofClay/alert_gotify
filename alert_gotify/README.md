@@ -15,7 +15,7 @@ Configure default Gotify server settings via the Splunk UI:
 Alternatively, configure via `local/alert_gotify_settings.conf`:
 
 ```ini
-[additional_parameters]
+[settings]
 gotify_url = https://gotify.example.com
 gotify_token = your_app_token_here
 ```
