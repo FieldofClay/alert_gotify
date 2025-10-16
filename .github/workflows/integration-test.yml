@@ -1,0 +1,84 @@
+name: Integration Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  prepare-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.set-versions.outputs.versions }}
+    steps:
+      - name: Create version list
+        id: set-versions
+        run: |
+          VERSIONS="${{ vars.SPLUNK_VERSIONS }}"
+          
+          # Convert comma-separated to JSON array
+          JSON_ARRAY=$(echo "$VERSIONS" | jq -R -c 'split(",") | map(gsub("^\\s+|\\s+$";""))')
+          echo "versions=$JSON_ARRAY" >> $GITHUB_OUTPUT
+          echo "Testing Splunk versions: $JSON_ARRAY"
+
+  integration-test:
+    needs: prepare-versions
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        splunk_version: ${{ fromJson(needs.prepare-versions.outputs.versions) }}
+    
+    name: Integration Test (Splunk ${{ matrix.splunk_version }})
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.9'
+      
+      - name: Install UCC Framework
+        run: pip install splunk-add-on-ucc-framework
+      
+      - name: Build add-on
+        run: ucc-gen build --source alert_gotify/package --ta-version 0.0.1-test
+      
+      - name: Make scripts executable
+        run: |
+          cd alert_gotify/tests/integration
+          chmod +x verify.sh init-gotify.sh configure-splunk.sh
+      
+      - name: Start Docker services
+        env:
+          SPLUNK_VERSION: ${{ matrix.splunk_version }}
+        run: |
+          cd alert_gotify/tests/integration
+          docker compose up -d
+          
+      - name: Wait for services and verify message delivery
+        run: |
+          cd alert_gotify/tests/integration
+          ./verify.sh 240
+      
+      - name: Show container logs on failure
+        if: failure()
+        run: |
+          cd alert_gotify/tests/integration
+          echo "=== Gotify Logs ==="
+          docker compose logs gotify
+          echo "=== Splunk Logs ==="
+          docker compose logs splunk
+      
+      - name: Cleanup
+        if: always()
+        run: |
+          cd alert_gotify/tests/integration
+          docker compose down -v

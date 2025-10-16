@@ -1,0 +1,24 @@
+# Dependabot configuration for keeping dependencies up to date
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Update Python dependencies in package lib
+  - package-ecosystem: "pip"
+    directories:
+      - "/alert_gotify/package/lib"
+      - "/alert_gotify/tests"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "python"
+  
+  # Update GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"

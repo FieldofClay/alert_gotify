@@ -1,0 +1,140 @@
+{
+    "pages": {
+        "configuration": {
+            "tabs": [
+                {
+                    "name": "settings",
+                    "title": "Settings",
+                    "entity": [
+                        {
+                            "type": "text",
+                            "label": "Gotify Server URL",
+                            "field": "gotify_url",
+                            "help": "The base URL of your Gotify server (e.g., https://gotify.example.com)",
+                            "required": false,
+                            "validators": [
+                                {
+                                    "type": "string",
+                                    "minLength": 0,
+                                    "maxLength": 500
+                                }
+                            ]
+                        },
+                        {
+                            "type": "text",
+                            "label": "Gotify App Token",
+                            "field": "gotify_token",
+                            "help": "The default app token for your Gotify application",
+                            "required": false,
+                            "encrypted": true,
+                            "validators": [
+                                {
+                                    "type": "string",
+                                    "minLength": 0,
+                                    "maxLength": 100
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "loggingTab"
+                }
+            ],
+            "title": "Configuration",
+            "description": "Set up Gotify Alert Action"
+        }
+    },
+    "alerts": [
+        {
+            "name": "alert_gotify",
+            "label": "Send a Gotify Message",
+            "description": "Send a message to a Gotify server",
+            "entity": [
+                {
+                    "type": "text",
+                    "label": "Message",
+                    "field": "message",
+                    "required": true,
+                    "help": "The message body to send."
+                },
+                {
+                    "type": "text",
+                    "label": "Title",
+                    "field": "title",
+                    "required": false,
+                    "help": "The message title."
+                },
+                {
+                    "type": "singleSelect",
+                    "label": "Priority",
+                    "field": "priority",
+                    "defaultValue": "5",
+                    "required": true,
+                    "help": "Message priority (0-10)",
+                    "options": {
+                        "disableSearch": true,
+                        "items": [
+                            {
+                                "label": "0 - Lowest",
+                                "value": "0"
+                            },
+                            {
+                                "label": "1",
+                                "value": "1"
+                            },
+                            {
+                                "label": "2",
+                                "value": "2"
+                            },
+                            {
+                                "label": "3",
+                                "value": "3"
+                            },
+                            {
+                                "label": "4",
+                                "value": "4"
+                            },
+                            {
+                                "label": "5 - Normal",
+                                "value": "5"
+                            },
+                            {
+                                "label": "6",
+                                "value": "6"
+                            },
+                            {
+                                "label": "7",
+                                "value": "7"
+                            },
+                            {
+                                "label": "8 - High",
+                                "value": "8"
+                            },
+                            {
+                                "label": "9",
+                                "value": "9"
+                            },
+                            {
+                                "label": "10 - Highest",
+                                "value": "10"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "meta": {
+        "name": "alert_gotify",
+        "restRoot": "alert_gotify",
+        "version": "2.0.0",
+        "displayName": "Gotify Alert Action",
+        "hideUCCVersion": true,
+        "schemaVersion": "0.0.10",
+        "supportedThemes": [
+            "light",
+            "dark"
+        ]
+    }
+}
