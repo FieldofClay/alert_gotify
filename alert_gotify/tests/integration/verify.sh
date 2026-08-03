@@ -34,13 +34,13 @@ while true; do
     # Check Gotify logs for 200 POST to /message endpoint
     LOGS=$(docker compose logs gotify 2>/dev/null || echo "")
     
-    # Look for: 2025-10-16T02:24:59Z | 200 |   59.458697ms | 2001:cafe:42::6c0 | POST     "/message?token=[masked]"
-    if echo "$LOGS" | grep -E '200.*POST.*"/message' > /dev/null; then
+    # Look for: method=POST path=/message status=200
+    if echo "$LOGS" | grep -E 'method=POST path=/message status=200' > /dev/null; then
         echo ""
         echo "SUCCESS: Message successfully delivered to Gotify!"
         echo ""
         echo "=== Delivery Confirmation ==="
-        echo "$LOGS" | grep -E '200.*POST.*"/message"' | tail -5
+        echo "$LOGS" | grep -E 'method=POST path=/message status=200' | tail -5
         echo ""
         echo "=== Splunk Alert Logs ==="
         docker compose logs splunk | grep -i "gotify\|alert_gotify\|200: Success" | tail -20 || echo "No detailed logs found"
