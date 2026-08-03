@@ -132,7 +132,7 @@
     "displayName": "Gotify Alert Action",
     "hideUCCVersion": true,
     "schemaVersion": "0.0.10",
-    "supportedPythonVersion": "3.13",
+    "supportedPythonVersion": ["3.13"],
     "supportedThemes": [
       "light",
       "dark"
