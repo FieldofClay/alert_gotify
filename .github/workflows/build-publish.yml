@@ -5,6 +5,9 @@ on:
     types:
       - published
 
+env:
+  PYTHON_VERSION: '3.13'
+
 permissions:
   contents: write
 
@@ -43,7 +46,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.9'
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install UCC
         run: pip install splunk-add-on-ucc-framework
