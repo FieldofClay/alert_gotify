@@ -128,11 +128,13 @@
   "meta": {
     "name": "alert_gotify",
     "restRoot": "alert_gotify",
-    "version": "2.0.2",
+    "version": "2.2.0",
     "displayName": "Gotify Alert Action",
     "hideUCCVersion": true,
     "schemaVersion": "0.0.10",
-    "supportedPythonVersion": ["3.13"],
+    "supportedPythonVersion": [
+      "3.13"
+    ],
     "supportedThemes": [
       "light",
       "dark"
