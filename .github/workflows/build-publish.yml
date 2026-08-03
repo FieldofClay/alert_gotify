@@ -18,15 +18,36 @@ jobs:
         run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v7
-      
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update version in globalConfig.json
+        run: |
+          VERSION="${TAG_NAME#v}"
+          jq --arg version "$VERSION" '.meta.version = $version' alert_gotify/globalConfig.json > alert_gotify/globalConfig.json.tmp
+          mv alert_gotify/globalConfig.json.tmp alert_gotify/globalConfig.json
+
+      - name: Commit version update
+        run: |
+          git add alert_gotify/globalConfig.json
+          if git diff --cached --quiet; then
+            echo "No version change to commit."
+          else
+            git commit -m "chore(release): update globalConfig.json version to ${{ env.TAG_NAME }}"
+            git push origin HEAD:${{ github.event.release.target_commitish }}
+          fi
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.9'
-      
+
       - name: Install UCC
         run: pip install splunk-add-on-ucc-framework
-      
+
       - name: Build add-on
         run: ucc-gen build --source alert_gotify/package --ta-version ${{ env.TAG_NAME }}
       
