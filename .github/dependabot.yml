@@ -10,15 +10,9 @@ updates:
       - "/alert_gotify/tests"
     schedule:
       interval: "weekly"
-    labels:
-      - "dependencies"
-      - "python"
   
   # Update GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    labels:
-      - "dependencies"
-      - "github-actions"
